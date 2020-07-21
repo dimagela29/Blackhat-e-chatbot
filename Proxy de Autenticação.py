@@ -102,4 +102,44 @@ def proxy_handler(cliente_socket, remote_host, remote_port, receive_first):
                             print"[*]No more data. Closing connections."
                             
                             break
-                        
+# esta é uma boa função de dumping de valores hexa diretamente obtida dos comentarios em:
+#http://code.activestate.com/recipes/142812-hex-dumper/
+                            
+def hexdump(src,lenght=16):
+    result = []
+    digits = 4 if isinstance(src, unicode) else 2
+    for i in xrange(0, len(src), lenght):
+        s = src[i:i+lenght]
+        hexa = b ' '.join(['%0*X' % (digits, ord(x)) for x in s])
+        text = b ' '.join([x if 0x20 <= ord(x) < 0x7F else b '.' for x in s])
+        result.append( b"%04X %-*s %s" % (i, lenght*(digits+1), hexa, text) )
+print b'\n'.join(result)
+def receive_from(connection):
+    buffer = ""
+    #definimos um timeout de 2 segundos; de acordo com
+    #seu alvo, pode ser que esse valor precise ser ajustado
+    connection.settimeout(2)
+try: 
+    #continua lendo em buffer até
+    #que não haja mais dados
+    #ou a temporização expire
+    while True:
+        data = connection.recv(4096)
+        
+        if not data:
+            break
+        
+        buffer += data
+        
+except:
+    pass
+return buffer
+ #modofica qualquer solicitação destinada ao host remoto
+ def request_handler(buffer):
+     #faz modificações no pacote
+     return buffer
+ #modifica qualquer resposta ao destinada ao host local 
+ def response_handler(buffer):
+     #faz modificações no pacote
+     return buffer
+ 
